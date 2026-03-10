@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import type { ScanMethod, Verdict } from '@prisma/client'
+
+type ScanMethod = 'BARCODE' | 'INGREDIENT_OCR'
+type Verdict = 'SAFE' | 'CAUTION' | 'AVOID'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
