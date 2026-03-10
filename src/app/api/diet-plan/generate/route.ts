@@ -6,6 +6,8 @@ import { auth } from '@/lib/auth'
 import type { DietPlanGenerateRequest, DietPlanGenerateResponse, ApiErrorResponse } from '@/types/api'
 import type { DietPlan } from '@/types/diet'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   // Get session for user ID (rate limiting key)
   const session = await auth()

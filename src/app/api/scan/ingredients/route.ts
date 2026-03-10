@@ -5,6 +5,8 @@ import { checkRateLimit, getRateLimit, getClientIdentifier } from '@/lib/rate-li
 import { auth } from '@/lib/auth'
 import type { IngredientOCRResponse, ApiErrorResponse } from '@/types/api'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request): Promise<NextResponse<IngredientOCRResponse | ApiErrorResponse>> {
   // Get session for user ID (rate limiting key)
   const session = await auth()

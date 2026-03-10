@@ -8,6 +8,8 @@ import type { VerdictRequest, VerdictResponse, ApiErrorResponse } from '@/types/
 import type { DietPlan } from '@/types/diet'
 import type { NutrientMap } from '@/types/scan'
 
+export const dynamic = 'force-dynamic'
+
 function isValidDietPlan(plan: unknown): plan is DietPlan {
   if (!plan || typeof plan !== 'object') return false
   const p = plan as Record<string, unknown>
