@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       prisma.userDisease.upsert({
         where: { userId_diseaseName: { userId, diseaseName: diseaseName.trim() } },
         update: {
-          dietPlan: dietPlan as unknown as Record<string, unknown>,
+          dietPlan: dietPlan as never,
           isCustomized,
           isActive: true,
           updatedAt: new Date(),
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
         create: {
           userId,
           diseaseName: diseaseName.trim(),
-          dietPlan: dietPlan as unknown as Record<string, unknown>,
+          dietPlan: dietPlan as never,
           isCustomized,
           isActive: true,
         },
@@ -93,8 +93,8 @@ export async function POST(request: Request) {
       // Keep UserProfile in sync (legacy)
       prisma.userProfile.upsert({
         where: { userId },
-        update: { diseaseName: diseaseName.trim(), dietPlan: dietPlan as unknown as Record<string, unknown>, isCustomized },
-        create: { userId, diseaseName: diseaseName.trim(), dietPlan: dietPlan as unknown as Record<string, unknown>, isCustomized },
+        update: { diseaseName: diseaseName.trim(), dietPlan: dietPlan as never, isCustomized },
+        create: { userId, diseaseName: diseaseName.trim(), dietPlan: dietPlan as never, isCustomized },
       }),
     ])
 

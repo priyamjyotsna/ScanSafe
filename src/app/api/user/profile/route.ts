@@ -146,7 +146,7 @@ export async function PUT(request: Request) {
     await prisma.userProfile.update({
       where: { userId },
       data: {
-        dietPlan: dietPlan as unknown as Record<string, unknown>,
+        dietPlan: dietPlan as never,
         isCustomized,
       },
     })
