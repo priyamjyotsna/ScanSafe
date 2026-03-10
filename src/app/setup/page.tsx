@@ -60,29 +60,32 @@ export default function DiseaseSelectionPage() {
   const showRecentDiseases = status !== 'authenticated' && recentDiseases.length > 0
 
   return (
-    <div className="min-h-screen bg-[#fafaf8]">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
       <AppHeader />
 
-      <main className="mx-auto max-w-md px-5 pb-10 pt-8">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
-            <svg className="h-7 w-7 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+      <main className="mx-auto max-w-lg px-5 pb-10 pt-12">
+        <div className="mb-10 text-center">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-xl">
+            <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900">What condition are you managing?</h2>
-          <p className="mt-1.5 text-sm text-gray-500">
-            We&apos;ll create a personalized diet plan to help you make safer food choices.
+          <h2 className="text-3xl font-bold text-gray-900">Your Health Matters</h2>
+          <p className="mt-3 text-base text-gray-600">
+            Tell us what condition you&apos;re managing, and we&apos;ll create a personalized diet plan to help you make safer food choices.
           </p>
         </div>
 
-        <div className="space-y-5">
-          <DiseaseSearchInput onSelect={handleSelect} />
+        <div className="space-y-6">
+          <div className="rounded-2xl border-2 border-emerald-200 bg-white p-6 shadow-lg">
+            <label className="mb-3 block text-sm font-semibold text-gray-700">Search for your condition</label>
+            <DiseaseSearchInput onSelect={handleSelect} />
+          </div>
 
           {/* Saved diseases (logged-in users) */}
           {showSavedDiseases && (
-            <div>
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Your conditions</p>
+            <div className="rounded-2xl border-2 border-blue-200 bg-white p-6 shadow-lg">
+              <p className="mb-3 text-sm font-semibold text-gray-700">Your Saved Conditions</p>
               <div className="space-y-2">
                 {savedDiseases.map((d) => (
                   <button
@@ -90,16 +93,16 @@ export default function DiseaseSelectionPage() {
                     type="button"
                     disabled={switching === d.diseaseName}
                     onClick={() => handleQuickSelect(d)}
-                    className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition-all
+                    className={`flex w-full items-center justify-between rounded-xl border-2 px-4 py-3.5 text-left text-sm font-medium transition-all
                       ${d.isActive
-                        ? 'border-emerald-300 bg-emerald-50 text-emerald-800'
-                        : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-300 hover:bg-emerald-50'
+                        ? 'border-emerald-400 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-900 shadow-md'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-md'
                       }`}
                   >
-                    <span className="font-medium">{d.diseaseName}</span>
+                    <span>{d.diseaseName}</span>
                     {d.isActive && (
-                      <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                      <span className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-2.5 py-1 text-xs font-bold text-white">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
                         Active
@@ -116,15 +119,15 @@ export default function DiseaseSelectionPage() {
 
           {/* Recent diseases (guest users) */}
           {showRecentDiseases && (
-            <div>
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Recent</p>
+            <div className="rounded-2xl border-2 border-purple-200 bg-white p-6 shadow-lg">
+              <p className="mb-3 text-sm font-semibold text-gray-700">Recently Searched</p>
               <div className="flex flex-wrap gap-2">
                 {recentDiseases.map((d) => (
                   <button
                     key={d}
                     type="button"
                     onClick={() => handleGuestQuickSelect(d)}
-                    className="rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-sm text-gray-700 transition-all hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700"
+                    className="rounded-full border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-2 text-sm font-medium text-purple-700 transition-all hover:border-purple-400 hover:shadow-md"
                   >
                     {d}
                   </button>
@@ -137,12 +140,14 @@ export default function DiseaseSelectionPage() {
             type="button"
             disabled={!selectedDisease}
             onClick={handleContinue}
-            className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+            className="w-full rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-4 text-base font-semibold text-white shadow-lg transition-all hover:from-emerald-700 hover:to-teal-700 hover:shadow-xl disabled:cursor-not-allowed disabled:from-gray-300 disabled:to-gray-300 disabled:text-gray-500 disabled:shadow-none"
           >
-            Continue
+            {selectedDisease ? `Continue with ${selectedDisease}` : 'Select a condition to continue'}
           </button>
 
-          <MedicalDisclaimer />
+          <div className="rounded-2xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 shadow-md">
+            <MedicalDisclaimer />
+          </div>
         </div>
       </main>
     </div>
