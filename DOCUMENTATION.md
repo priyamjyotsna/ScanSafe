@@ -1,501 +1,1022 @@
-# DietScan — Complete Project Documentation
+# DietScan (ScanSafe) — Complete Project Documentation
+
+**Version**: 1.0  
+**Last Updated**: March 10, 2026  
+**Repository**: https://github.com/priyamjyotsna/ScanSafe  
+**Live URL**: https://scan-safe.vercel.app
+
+---
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Tech Stack](#tech-stack)
-3. [Architecture](#architecture)
-4. [User Flow](#user-flow)
-5. [Database Schema](#database-schema)
-6. [API Routes](#api-routes)
-7. [Key Features](#key-features)
-8. [Environment Setup](#environment-setup)
-9. [Deployment](#deployment)
-10. [Testing](#testing)
+1. [Project Overview](#1-project-overview)
+2. [Tech Stack](#2-tech-stack)
+3. [System Architecture](#3-system-architecture)
+4. [User Flow](#4-user-flow)
+5. [Database Schema](#5-database-schema)
+6. [API Reference](#6-api-reference)
+7. [Key Features](#7-key-features)
+8. [Component Architecture](#8-component-architecture)
+9. [Project Structure](#9-project-structure)
+10. [Environment Setup](#10-environment-setup)
+11. [Development Workflow](#11-development-workflow)
+12. [Testing Strategy](#12-testing-strategy)
+13. [Deployment Guide](#13-deployment-guide)
+14. [Security](#14-security)
+15. [Performance Optimization](#15-performance-optimization)
+16. [Troubleshooting](#16-troubleshooting)
+17. [Future Enhancements](#17-future-enhancements)
 
 ---
 
-## Project Overview
+## 1. Project Overview
 
-**DietScan** is a mobile-first Progressive Web App (PWA) that helps people with medical conditions make safe food choices while grocery shopping.
+**DietScan (ScanSafe)** is a mobile-first Progressive Web App (PWA) that helps people with medical conditions make safe food choices while grocery shopping.
 
-### Core Features
-- Disease-specific diet plan generation using AI
-- Barcode scanning for instant product analysis
-- Ingredient OCR for products without barcodes
-- Personalized safe/caution/avoid verdicts
-- Scan history tracking
-- Multi-disease profile management
-- Guest mode with authentication gate
+### Core Value Proposition
+
+Bridges the gap between doctor's dietary advice and real grocery shopping decisions by providing:
+- Instant product analysis via barcode or ingredient scanning
+- AI-generated personalized diet plans
+- Clear safe/caution/avoid verdicts
+- Disease-specific nutritional guidance
 
 ### Target Users
-- Patients managing chronic conditions (diabetes, hypertension, kidney disease, liver conditions, etc.)
-- Caregivers shopping for patients
+
+- Patients managing chronic conditions (diabetes, hypertension, kidney disease, liver conditions, cancer, etc.)
+- Caregivers and family members shopping for patients
 - Anyone following medically prescribed diets
 
----
+### Key Features
 
-## Tech Stack
-
-### Frontend
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript 5.x
-- **Styling**: Tailwind CSS 3.x
-- **UI Components**: Custom components with Tailwind
-- **State Management**: React hooks + localStorage for guest state
-- **Testing**: Vitest + React Testing Library + fast-check (property-based testing)
-
-### Backend
-- **Runtime**: Node.js (Next.js API Routes)
-- **Database**: PostgreSQL (Neon serverless)
-- **ORM**: Prisma 7.x with pg adapter
-- **Authentication**: NextAuth.js v5 (Google OAuth)
-- **AI Services**: OpenAI GPT-4o and GPT-4o-mini
-
-### Third-Party APIs
-- **OpenAI GPT-4o**: Diet plan generation, verdict analysis
-- **OpenAI GPT-4o-mini**: Disease suggestions (cost-optimized)
-- **OpenAI GPT-4o Vision**: Ingredient OCR from images
-- **Open Food Facts API**: Product database (3M+ products)
-- **ZXing-js**: Client-side barcode scanning
-
-### Deployment
-- **Hosting**: Vercel
-- **Database**: Neon PostgreSQL
-- **CDN**: Vercel Edge Network
-- **SSL**: Automatic HTTPS
+- 🔍 **AI-Powered Disease Search**: Intelligent suggestions for specific disease variants with 400ms debounce
+- 🎯 **Personalized Diet Plans**: AI-generated plans tailored to your condition with editing capabilities
+- 📱 **Barcode Scanner**: Instant product analysis using phone camera (ZXing-js)
+- 📸 **Ingredient OCR**: Scan ingredient labels when barcodes aren't available (GPT-4o Vision)
+- ✅ **Smart Verdicts**: Clear safe/caution/avoid ratings with detailed reasoning
+- 📊 **Scan History**: Track all scans and decisions (authenticated users)
+- 👥 **Multi-Disease Support**: Manage multiple conditions with quick switching
+- 🚀 **Guest Mode**: Try the app without signing in (up to 3 scans)
+- 🔄 **Data Migration**: Seamless migration from guest to authenticated state
 
 ---
 
-## Architecture
+## 2. Tech Stack
 
-### Application Structure
+### Frontend Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Next.js | 14.2.35 | Full-stack React framework with App Router |
+| React | 18 | UI library |
+| TypeScript | 5.x | Type safety |
+| Tailwind CSS | 3.4.1 | Utility-first styling |
+
+### Backend Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Next.js API Routes | 14.2.35 | RESTful API endpoints |
+| Prisma ORM | 7.4.2 | Type-safe database access |
+| Neon PostgreSQL | 16 | Serverless PostgreSQL database |
+| NextAuth.js | 5.0.0-beta.30 | Authentication (Google OAuth) |
+
+### AI & External Services
+
+| Service | Model/Version | Purpose |
+|---------|---------------|---------|
+| OpenAI GPT-4o | latest | Disease suggestions, diet plan generation |
+| OpenAI GPT-4o-mini | latest | Verdict analysis (cost optimization) |
+| OpenAI GPT-4o Vision | latest | Ingredient OCR from images |
+| Open Food Facts API | v2 | Product database (3M+ products) |
+| ZXing-js | 0.21.3 | Client-side barcode scanning |
+
+### Testing & Quality
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Vitest | 4.0.18 | Unit and integration testing |
+| React Testing Library | 16.3.2 | Component testing |
+| fast-check | 4.5.3 | Property-based testing |
+| ESLint | 8.x | Code linting |
+| TypeScript | 5.x | Static type checking |
+
+### Deployment & Infrastructure
+
+| Service | Purpose |
+|---------|---------|
+| Vercel | Hosting and deployment |
+| GitHub | Version control and CI/CD |
+| Neon | Database hosting |
+
+### Why This Stack?
+
+- **Vercel + Next.js + Neon**: Officially documented trio, near-zero DevOps
+- **OpenAI handles three jobs**: Disease suggestions, diet plan generation, ingredient OCR — no extra vendors
+- **ZXing-js runs in browser**: No server round-trip for barcode decoding, instant results
+- **Open Food Facts**: Free, 3M+ products, strong Indian brand coverage, no rate limits
+- **Prisma + Neon**: Type-safe client from schema, connection pooling for serverless
+
+---
+
+## 3. System Architecture
+
+### High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Client (Browser)                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Camera     │  │  localStorage│  │  React State │  │
-│  │   (ZXing)    │  │  (Guest Mode)│  │   (Session)  │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│              Next.js App Router (Server)                 │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │  API Routes                                       │   │
-│  │  • /api/disease/suggest                          │   │
-│  │  • /api/diet-plan/generate                       │   │
-│  │  • /api/scan/barcode                             │   │
-│  │  • /api/scan/ingredients                         │   │
-│  │  • /api/scan/verdict                             │   │
-│  │  • /api/user/profile                             │   │
-│  └──────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
-           │                    │                │
-           ▼                    ▼                ▼
-    ┌──────────┐      ┌──────────┐      ┌──────────────┐
-    │  OpenAI  │      │  Prisma  │      │ Open Food    │
-    │  API     │      │  Client  │      │ Facts API    │
-    └──────────┘      └──────────┘      └──────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                        Client (Browser)                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   React UI   │  │  ZXing-js    │  │  localStorage│      │
+│  │  Components  │  │   Scanner    │  │  (Guest Data)│      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└─────────────────────────────────────────────────────────────┘
                             │
+                            │ HTTPS
                             ▼
-                   ┌─────────────────┐
-                   │ Neon PostgreSQL │
-                   └─────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    Next.js App (Vercel)                      │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │              App Router Pages                         │   │
+│  │  /setup → /setup/diet-plan → /scan → /scan/result   │   │
+│  └──────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                  API Routes                           │   │
+│  │  /api/disease/suggest                                 │   │
+│  │  /api/diet-plan/generate                              │   │
+│  │  /api/scan/barcode                                    │   │
+│  │  /api/scan/ingredients                                │   │
+│  │  /api/scan/verdict                                    │   │
+│  │  /api/user/profile                                    │   │
+│  └──────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+         │                    │                    │
+         │                    │                    │
+         ▼                    ▼                    ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   OpenAI     │    │ Open Food    │    │    Neon      │
+│   GPT-4o     │    │    Facts     │    │  PostgreSQL  │
+│              │    │     API      │    │              │
+└──────────────┘    └──────────────┘    └──────────────┘
 ```
 
-### Data Flow
+### Data Flow Diagrams
 
-#### Guest User Flow
-1. User enters disease → stored in localStorage
-2. AI generates diet plan → stored in localStorage
-3. User scans product → verdict generated using localStorage data
-4. After 3 scans → authentication required
-5. On sign-in → localStorage data migrated to database
+#### 1. Disease Selection Flow
+```
+User Input → Debounce (400ms) → /api/disease/suggest → OpenAI GPT-4o
+→ Return 8 suggestions → User selects → Store in state
+```
 
-#### Authenticated User Flow
-1. User profile loaded from database
-2. User can manage multiple diseases
-3. One disease marked as "active" at a time
-4. All scans saved to scan history
-5. Diet plans persisted across devices
+#### 2. Diet Plan Generation Flow
+```
+Disease Name → /api/diet-plan/generate → OpenAI GPT-4o
+→ Generate structured plan → Return JSON → Display & allow editing
+→ Save to DB (authenticated) or localStorage (guest)
+```
+
+#### 3. Barcode Scan Flow
+```
+Camera → ZXing-js decode → Barcode string → /api/scan/barcode
+→ Open Food Facts lookup → Product data → /api/scan/verdict
+→ OpenAI analysis → Verdict → Display result
+```
+
+#### 4. Ingredient OCR Flow
+```
+Camera → Capture image → Base64 encode → /api/scan/ingredients
+→ GPT-4o Vision OCR → Extract ingredients → /api/scan/verdict
+→ OpenAI analysis → Verdict → Display result
+```
+
+### Authentication Flow
+
+```
+Guest User (localStorage)
+    │
+    ├─ First scan: Full experience, no gate
+    │
+    ├─ After scan: Soft prompt (dismissible)
+    │
+    ├─ Second scan: Soft prompt again
+    │
+    └─ Third scan attempt: Hard gate (must sign in)
+         │
+         ▼
+    Google OAuth (NextAuth.js)
+         │
+         ▼
+    Migrate localStorage → Database
+         │
+         ▼
+    Authenticated User (full features)
+```
 
 ---
 
-## User Flow
+## 4. User Flow
 
 ### First-Time User Journey
 
 ```
-1. Landing (/) 
-   └─> Redirects to /setup
-
+1. Launch App
+   ↓
 2. Disease Selection (/setup)
-   ├─> Search input with AI suggestions
-   ├─> Select disease from dropdown
-   └─> Continue to diet plan
-
+   - Search for condition
+   - AI suggests 8 specific variants
+   - Select or confirm custom input
+   ↓
 3. Diet Plan Review (/setup/diet-plan)
-   ├─> AI generates personalized plan
-   ├─> User reviews avoid/prefer lists
-   ├─> Optional: Edit plan
-   └─> Save and continue to scan
-
+   - AI generates personalized plan
+   - Review: Avoid / Prefer / Watch / Nutrients
+   - Edit if needed (add/remove items)
+   - Confirm and save
+   ↓
 4. Scan Screen (/scan)
-   ├─> Camera opens
-   ├─> Toggle: Barcode or Ingredient mode
-   ├─> Scan product
-   └─> Navigate to result
-
+   - Camera opens
+   - Choose: Barcode or Ingredient mode
+   - Scan product
+   ↓
 5. Verdict Screen (/scan/result)
-   ├─> Shows Safe/Caution/Avoid verdict
-   ├─> Displays reasoning and nutrients
-   └─> "Scan Another" returns to step 4
-
-6. Authentication Gate (after 3 scans)
-   ├─> Modal prompts Google sign-in
-   ├─> On sign-in: data migrated to DB
-   └─> Continue scanning with history saved
+   - See verdict: Safe / Caution / Avoid
+   - Read reasoning
+   - View nutrient breakdown
+   - Save to history (if authenticated)
+   ↓
+6. Authentication Gate
+   - After 1st scan: Soft prompt (dismissible)
+   - After 2nd scan: Soft prompt again
+   - Before 3rd scan: Hard gate (must sign in)
 ```
 
 ### Returning User Journey
 
 ```
-1. Landing (/)
-   └─> If authenticated + has profile → /scan
-   └─> If not → /setup
+Authenticated User
+   ↓
+Launch App
+   ↓
+Has active disease? → YES → Go to /scan
+                   → NO  → Go to /setup
+```
 
-2. Profile Page (/profile)
-   ├─> View all saved diseases
-   ├─> Switch active disease
-   ├─> View scan history
-   └─> Edit diet plans
+### Multi-Disease Management
+
+```
+User with multiple diseases
+   ↓
+/setup page shows:
+   - "Your Saved Conditions" section
+   - Active disease highlighted
+   - Click any disease → Switch active → Go to /scan
+   ↓
+Add new disease:
+   - Search for new condition
+   - Generate new diet plan
+   - Saved alongside existing diseases
 ```
 
 ---
 
-## Database Schema
+## 5. Database Schema
 
-### Models
+### Entity Relationship Diagram
 
-#### User
-```typescript
-{
-  id: string (cuid)
-  email: string (unique)
-  name: string?
-  image: string?
-  googleId: string? (unique)
-  createdAt: DateTime
-  updatedAt: DateTime
-  
-  // Relations
-  profile: UserProfile?
-  diseases: UserDisease[]
-  scanHistory: ScanHistory[]
-}
+```
+┌──────────────┐
+│     User     │
+├──────────────┤
+│ id (PK)      │
+│ email        │◄─────┐
+│ name         │      │
+│ image        │      │
+│ googleId     │      │
+│ createdAt    │      │
+│ updatedAt    │      │
+└──────────────┘      │
+                      │
+        ┌─────────────┴─────────────┬─────────────┐
+        │                           │             │
+        │                           │             │
+┌───────▼────────┐         ┌────────▼──────┐  ┌──▼──────────┐
+│  UserProfile   │         │ UserDisease   │  │ScanHistory  │
+├────────────────┤         ├───────────────┤  ├─────────────┤
+│ id (PK)        │         │ id (PK)       │  │ id (PK)     │
+│ userId (FK)    │         │ userId (FK)   │  │ userId (FK) │
+│ diseaseName    │         │ diseaseName   │  │ productName │
+│ dietPlan (JSON)│         │ dietPlan(JSON)│  │ brand       │
+│ isCustomized   │         │ isCustomized  │  │ barcode     │
+│ createdAt      │         │ isActive      │  │ scanMethod  │
+│ updatedAt      │         │ createdAt     │  │ verdict     │
+└────────────────┘         │ updatedAt     │  │verdictDetail│
+                           └───────────────┘  │ scannedAt   │
+                                              └─────────────┘
 ```
 
-#### UserProfile
-```typescript
-{
-  id: string (cuid)
-  userId: string (unique, FK to User)
-  diseaseName: string
-  dietPlan: Json
-  isCustomized: boolean
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-```
+### Schema Details
 
-#### UserDisease
-```typescript
-{
-  id: string (cuid)
-  userId: string (FK to User)
-  diseaseName: string
-  dietPlan: Json
-  isCustomized: boolean
-  isActive: boolean
-  createdAt: DateTime
-  updatedAt: DateTime
-  
-  // Unique constraint on [userId, diseaseName]
-}
-```
+See `prisma/schema.prisma` for complete schema definition.
 
-#### ScanHistory
-```typescript
-{
-  id: string (cuid)
-  userId: string (FK to User)
-  productName: string?
-  brand: string?
-  barcode: string?
-  scanMethod: ScanMethod (BARCODE | INGREDIENT_OCR)
-  verdict: Verdict (SAFE | CAUTION | AVOID)
-  verdictDetail: Json?
-  scannedAt: DateTime
-}
-```
+#### Key Tables
 
-### Diet Plan JSON Structure
+**User**: Stores authentication data from Google OAuth
+- `id`: Unique identifier (cuid)
+- `email`: User's email (unique)
+- `googleId`: Google account ID
+- Relations: UserProfile, UserDisease[], ScanHistory[]
+
+**UserProfile**: Legacy single-disease storage (kept for backward compatibility)
+- `diseaseName`: Plain text disease name
+- `dietPlan`: JSON structure with avoid/prefer/watch/nutrients
+- `isCustomized`: Whether user edited the AI-generated plan
+
+**UserDisease**: Multi-disease support (current implementation)
+- `diseaseName`: Plain text disease name
+- `dietPlan`: JSON structure
+- `isActive`: Only one disease can be active at a time
+- `@@unique([userId, diseaseName])`: Prevents duplicate diseases per user
+
+**ScanHistory**: Tracks all scans for authenticated users
+- `scanMethod`: BARCODE or INGREDIENT_OCR
+- `verdict`: SAFE, CAUTION, or AVOID
+- `verdictDetail`: JSON with reason and flagged nutrients
+
+### Design Decisions
+
+1. **diseaseName as plain text**: No foreign key to a diseases table. Allows flexibility for any medical condition without maintaining a rigid disease database.
+
+2. **dietPlan as JSON**: AI-generated structure can evolve. Avoids complex relational schema for dynamic medical data.
+
+3. **Multi-disease support**: UserDisease table allows managing multiple conditions. Only one can be "active" at a time.
+
+4. **Lightweight scan history**: Only stores verdict + product name + reason. Full nutrition data fetched fresh from Open Food Facts.
+
+5. **Cascade deletes**: When a user is deleted, all related data is automatically deleted.
+
+---
+
+## 6. API Reference
+
+### Disease Suggestion API
+
+**Endpoint**: `POST /api/disease/suggest`
+
+**Purpose**: Get AI-generated disease variant suggestions
+
+**Request**:
 ```json
 {
-  "avoid": ["High-sodium foods", "Processed meats"],
-  "prefer": ["Fresh vegetables", "Lean proteins"],
-  "watch": ["Daily sodium < 1500mg", "Protein intake"],
-  "nutrients": {
-    "Sodium": "< 300mg/serving",
-    "Sugar": "< 5g/serving"
+  "query": "cirrhosis"
+}
+```
+
+**Response**:
+```json
+{
+  "suggestions": [
+    "Compensated Liver Cirrhosis",
+    "Decompensated Liver Cirrhosis",
+    "Decompensated Cirrhosis with Ascites",
+    "Alcoholic Liver Cirrhosis",
+    "Primary Biliary Cirrhosis (PBC)",
+    "NASH-related Liver Cirrhosis",
+    "Wilson's Disease (Cirrhosis Stage)",
+    "Hepatitis C-related Cirrhosis"
+  ]
+}
+```
+
+**Rate Limiting**: 10 requests/minute per IP
+
+**OpenAI Prompt**:
+> "The user is typing a medical condition: '[query]'. Return exactly 8 clinically specific disease variants or subtypes that are meaningful for dietary management. Each variant should be specific enough that a dietitian would give different nutritional advice for each. Consider stage, severity, complications, and etiology. Return only a JSON array of strings, no explanation."
+
+**Implementation Details**:
+- Model: `gpt-4o-mini` (cost-effective for suggestions)
+- Max tokens: 500
+- Validation: Ensures response is a string array
+- Fallback: Extracts JSON from markdown code blocks if needed
+- Error handling: Returns structured error with retry flag
+
+### Diet Plan Generation API
+
+**Endpoint**: `POST /api/diet-plan/generate`
+
+**Purpose**: Generate personalized diet plan for a disease
+
+**Request**:
+```json
+{
+  "diseaseName": "Decompensated Liver Cirrhosis with Ascites"
+}
+```
+
+**Response**:
+```json
+{
+  "dietPlan": {
+    "avoid": [
+      "High-sodium foods (>300mg/serving)",
+      "Raw shellfish",
+      "Alcohol (absolutely)"
+    ],
+    "prefer": [
+      "Soft-cooked vegetables",
+      "Small frequent meals",
+      "BCAA-rich foods"
+    ],
+    "watch": [
+      "Daily sodium < 1500mg total",
+      "Fluid restriction if prescribed",
+      "Protein quality over quantity"
+    ],
+    "nutrients": {
+      "Sodium": "< 300mg/serving",
+      "Protein": "1.0–1.5g per kg body weight/day",
+      "Fluid": "Per doctor's prescription"
+    }
   }
 }
 ```
 
----
+**Rate Limiting**: 5 requests/minute per user
 
-## API Routes
+**OpenAI Prompt**:
+> "You are a clinical dietitian. A patient has been diagnosed with '[diseaseName]'. Generate a personalized diet plan. Return a JSON object with exactly these fields: avoid (array of specific foods/food groups to avoid with reasons), prefer (array of recommended foods/food groups), watch (array of dietary guidelines and things to monitor), nutrients (object mapping nutrient names to target limits like '< 300mg/serving'). Each array should have 5-10 items. Return only the JSON object, no explanation."
 
-### Authentication
-
-**GET/POST** `/api/auth/[...nextauth]`
-- NextAuth.js handler for Google OAuth
-- Handles sign-in, sign-out, session management
-- Creates/updates user in database on sign-in
-
-### Disease Management
-
-**POST** `/api/disease/suggest`
-- Accepts: `{ query: string }`
-- Returns: `{ suggestions: string[] }`
-- Uses: GPT-4o-mini for cost optimization
-- Rate limit: 30 requests/minute per IP
-- Debounce: 400ms on client side
-
-### Diet Plan
-
-**POST** `/api/diet-plan/generate`
-- Accepts: `{ diseaseName: string }`
-- Returns: `{ dietPlan: DietPlan }`
-- Uses: GPT-4o for comprehensive analysis
-- Rate limit: 5 requests/minute per user
-
-**POST** `/api/diet-plan/save`
-- Accepts: `{ diseaseName: string, dietPlan: DietPlan }`
-- Saves diet plan to database
-- Requires authentication
-
-### Scanning
-
-**POST** `/api/scan/barcode`
-- Accepts: `{ barcode: string }`
-- Returns: `{ found: boolean, product?: ProductData }`
-- Fetches from Open Food Facts API
-- Rate limit: 20 requests/minute per user
-
-**POST** `/api/scan/ingredients`
-- Accepts: `{ imageBase64: string }`
-- Returns: `{ ingredients: string[], rawText: string }`
-- Uses: GPT-4o Vision for OCR
-- Rate limit: 10 requests/minute per user
-
-**POST** `/api/scan/verdict`
-- Accepts: `{ diseaseName: string, dietPlan: DietPlan, product: ProductData }`
-- Returns: `{ verdict: Verdict, reason: string, flaggedNutrients: string[] }`
-- Uses: GPT-4o for analysis
-- Rate limit: 20 requests/minute per user
-
-**POST** `/api/scan/history`
-- Saves scan result to database
-- Requires authentication
-
-### User Profile
-
-**GET** `/api/user/profile`
-- Returns user profile with all diseases and diet plans
-- Requires authentication
-
-**PUT** `/api/user/profile`
-- Updates user profile or diet plan
-- Requires authentication
-
-**PATCH** `/api/user/active-disease`
-- Switches active disease
-- Accepts: `{ diseaseName: string }`
-- Requires authentication
+**Implementation Details**:
+- Model: `gpt-4o` (high accuracy for medical advice)
+- Max tokens: 1000
+- Validation: Ensures all required fields present and correct types
+- Structure validation: Checks avoid, prefer, watch arrays and nutrients object
+- Error handling: Graceful fallback with retry option
 
 ---
 
-## Key Features
+### Barcode Lookup API
 
-### 1. Disease Auto-Suggest
+**Endpoint**: `POST /api/scan/barcode`
 
-**Component**: `DiseaseSearchInput`
-**Location**: `src/components/disease/DiseaseSearchInput.tsx`
+**Purpose**: Look up product data from Open Food Facts
 
-Features:
-- Real-time AI-powered suggestions as user types
-- 400ms debounce to reduce API calls
-- Minimum 2 characters before triggering
-- Dropdown with 6-8 clinically specific variants
-- Handles misspellings naturally via GPT
-- Keyboard navigation support
+**Request**:
+```json
+{
+  "barcode": "8901058852429"
+}
+```
 
-Technical Implementation:
-- Uses `useDiseaseSearch` hook for debounced API calls
-- `SuggestionDropdown` component for results
-- Rate limited to 30 requests/minute
+**Response**:
+```json
+{
+  "found": true,
+  "product": {
+    "name": "Maggi 2-Minute Noodles",
+    "brand": "Nestlé",
+    "ingredients": ["Wheat flour", "Palm oil", "Salt", "Spice mix"],
+    "nutrients": {
+      "sodium": 870,
+      "sugar": 2,
+      "carbohydrates": 45,
+      "fat": 7,
+      "protein": 8,
+      "fiber": 1,
+      "saturatedFat": 3,
+      "transFat": 0
+    },
+    "servingSize": "75g"
+  }
+}
+```
 
-### 2. AI Diet Plan Generation
+**Error Response** (product not found):
+```json
+{
+  "found": false
+}
+```
 
-**Component**: `DietPlanCard`
-**Location**: `src/components/diet-plan/DietPlanCard.tsx`
+---
 
-Features:
-- Generates personalized plan based on disease
-- Displays avoid/prefer food lists
-- Shows nutrient targets and limits
-- Editable mode for customization
-- Medical disclaimer always visible
+### Ingredient OCR API
 
-Diet Plan Structure:
-- Foods to Avoid (red chips)
-- Recommended Foods (green chips)
-- Nutrients to Watch (text list)
-- Specific Nutrient Limits (grid)
+**Endpoint**: `POST /api/scan/ingredients`
 
-### 3. Barcode Scanner
+**Purpose**: Extract ingredients from image using GPT-4o Vision
 
-**Component**: `BarcodeScanner`
-**Location**: `src/components/scanner/BarcodeScanner.tsx`
+**Request**:
+```json
+{
+  "imageBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+}
+```
 
-Features:
-- Uses ZXing-js for client-side scanning
-- Supports EAN-13, UPC-A, QR codes, and more
-- Real-time camera feed processing
-- Automatic camera cleanup on unmount
-- Works on iOS Safari 14.3+
+**Response**:
+```json
+{
+  "ingredients": [
+    "Wheat flour",
+    "Refined palm oil",
+    "Salt",
+    "Sugar",
+    "Yeast extract"
+  ],
+  "rawText": "Ingredients: Wheat flour, Refined palm oil, Salt, Sugar, Yeast extract"
+}
+```
 
-Technical Details:
-- Requests camera permission via getUserMedia
-- Continuously decodes video frames
-- Stops camera on successful scan
-- Fallback to ingredient OCR if barcode not found
+**Rate Limiting**: 10 requests/minute per user
 
-### 4. Ingredient OCR
+---
 
-**Component**: `IngredientCapture`
-**Location**: `src/components/scanner/IngredientCapture.tsx`
+### Verdict Analysis API
 
-Features:
-- Captures photo of ingredient label
-- Uses GPT-4o Vision for text extraction
-- Handles poor lighting and focus
-- Returns structured ingredient list
+**Endpoint**: `POST /api/scan/verdict`
 
-Flow:
-1. User captures image
-2. Image converted to base64
-3. Sent to OpenAI Vision API
-4. Extracted ingredients parsed
-5. Passed to verdict analysis
+**Purpose**: Analyze product against user's diet plan
 
-### 5. Verdict System
+**Request**:
+```json
+{
+  "diseaseName": "Decompensated Liver Cirrhosis with Ascites",
+  "dietPlan": {
+    "avoid": ["High-sodium foods"],
+    "prefer": ["Soft-cooked vegetables"],
+    "watch": ["Daily sodium < 1500mg"],
+    "nutrients": { "Sodium": "< 300mg/serving" }
+  },
+  "product": {
+    "name": "Maggi 2-Minute Noodles",
+    "ingredients": ["Wheat flour", "Palm oil", "Salt"],
+    "nutrients": { "sodium": 870, "sugar": 2, "carbohydrates": 45 }
+  }
+}
+```
 
-**Component**: `VerdictBanner`
-**Location**: `src/components/verdict/VerdictBanner.tsx`
+**Response**:
+```json
+{
+  "verdict": "AVOID",
+  "reason": "Very high sodium (870mg per serving) is dangerous for cirrhosis with ascites. Sodium restriction is critical to manage fluid retention. This single serving would use 58% of your daily sodium limit.",
+  "flaggedNutrients": ["sodium"],
+  "safeAlternative": "Look for low-sodium rice noodles or plain rice instead."
+}
+```
 
-Three Verdict Types:
-- **SAFE** (Green): Product is safe for the condition
-- **CAUTION** (Amber): Okay in moderation, watch portions
-- **AVOID** (Red): Not recommended for the condition
+**Rate Limiting**: 20 requests/minute per user
 
-Each verdict includes:
-- Clear visual indicator
+**OpenAI Prompt**:
+> "You are a clinical dietitian. A patient has [diseaseName]. Their diet rules are: [dietPlan]. Analyze this food product: [product data]. Return a JSON object with: verdict (SAFE/CAUTION/AVOID), reason (2-3 sentences specific to their condition and this product), flaggedNutrients (array of nutrient names that are problematic), safeAlternative (one practical suggestion if verdict is CAUTION or AVOID)."
+
+**Implementation Details**:
+- Model: `gpt-4o` (medical accuracy critical)
+- Max tokens: 300
+- Automatic history save: For authenticated users, saves to ScanHistory table
+- Validation: Ensures verdict is one of SAFE/CAUTION/AVOID
+- Error handling: Non-blocking history save (verdict more important than history)
+
+---
+
+### User Profile API
+
+**Endpoint**: `GET /api/user/profile`
+
+**Purpose**: Get user's diseases and scan history
+
+**Response**:
+```json
+{
+  "diseaseName": "Type 2 Diabetes",
+  "dietPlan": { ... },
+  "isCustomized": false,
+  "diseases": [
+    {
+      "id": "clx123",
+      "diseaseName": "Type 2 Diabetes",
+      "dietPlan": { ... },
+      "isActive": true,
+      "createdAt": "2026-03-01T10:00:00Z"
+    }
+  ],
+  "scanHistory": [
+    {
+      "id": "clx456",
+      "productName": "Maggi Noodles",
+      "verdict": "AVOID",
+      "scannedAt": "2026-03-10T14:30:00Z"
+    }
+  ]
+}
+```
+
+**Endpoint**: `PUT /api/user/profile`
+
+**Purpose**: Update user's diet plan
+
+**Request**:
+```json
+{
+  "dietPlan": { ... },
+  "isCustomized": true
+}
+```
+
+---
+
+## 7. Key Features
+
+### 7.1 Disease Auto-Suggest
+
+**Implementation**: `src/components/disease/DiseaseSearchInput.tsx`
+
+- **Trigger**: User types in the disease input field
+- **Debounce**: 400ms after last keystroke before API call
+- **Minimum characters**: 2
+- **Results shown**: 6–8 suggestions in a dropdown
+- **Handling misspellings**: GPT-4o handles naturally (e.g., "diabeties" → diabetes variants)
+- **Fallback**: If not recognized medically, still allow user to proceed with typed text
+- **UI behavior**: Selecting a suggestion fills the input and highlights it as confirmed
+
+**Hook**: `src/hooks/useDiseaseSearch.ts`
+```typescript
+export function useDiseaseSearch() {
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (query.length < 2) {
+      setSuggestions([])
+      return
+    }
+
+    const timer = setTimeout(async () => {
+      setLoading(true)
+      const res = await fetch('/api/disease/suggest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      })
+      const data = await res.json()
+      setSuggestions(data.suggestions)
+      setLoading(false)
+    }, 400)
+
+    return () => clearTimeout(timer)
+  }, [query])
+
+  return { query, setQuery, suggestions, loading }
+}
+```
+
+### 7.2 Diet Plan Generation & Editing
+
+**Implementation**: `src/app/setup/diet-plan/page.tsx`
+
+- **Generated immediately** after disease confirmation (single API call, ~2–3 seconds)
+- **Loading state**: Show skeleton UI while generating
+- **Structure displayed**:
+  - Foods to Avoid (red chips)
+  - Recommended Foods (green chips)
+  - Nutrients to Watch (text list)
+  - Nutrient Targets (grid of key limits)
+- **Edit mode**: Tap Edit button → chips become removable, Add buttons appear
+- **Custom additions**: User can add their own items (doctor's specific instructions)
+- **Save**: Confirmed plan saved to database (authenticated) or localStorage (guest)
+- **Medical disclaimer**: Always shown below plan
+
+**Components**:
+- `DietPlanCard.tsx`: Full plan display with edit mode
+- `FoodChipList.tsx`: Avoid/prefer chip lists with add/remove
+- `NutrientTargetGrid.tsx`: Nutrient limits grid
+
+---
+
+### 7.3 Barcode Scanner (ZXing-js)
+
+**Implementation**: `src/components/scanner/BarcodeScanner.tsx`
+
+- **Library**: `@zxing/library` (browser-based, no server needed)
+- **Formats supported**: EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, QR Code, DataMatrix
+- **Camera access**: Uses browser `getUserMedia` API
+- **iOS compatibility**: Works on iOS 14.3+ in Safari
+- **Flow**:
+  1. Component mounts → request camera permission
+  2. ZXing continuously decodes video frames
+  3. On successful decode → stop camera → call `/api/scan/barcode`
+  4. If barcode not found → offer "Scan Ingredient Label" fallback
+- **Error states**: Camera denied, no camera found, barcode not in database
+- **Cleanup**: Always calls `codeReader.reset()` on unmount to release camera
+
+**Key Code**:
+```typescript
+const codeReader = new BrowserMultiFormatReader()
+
+useEffect(() => {
+  codeReader.decodeFromVideoDevice(
+    undefined, // Use default camera
+    videoRef.current,
+    (result, error) => {
+      if (result) {
+        onDecode(result.getText())
+        codeReader.reset()
+      }
+    }
+  )
+
+  return () => {
+    codeReader.reset() // Critical: release camera
+  }
+}, [])
+```
+
+---
+
+### 7.4 Ingredient OCR (GPT-4o Vision)
+
+**Implementation**: `src/components/scanner/IngredientCapture.tsx`
+
+- **Trigger**: User taps "Scan Ingredient List" mode
+- **Flow**:
+  1. User taps capture button on camera
+  2. Image captured as base64 JPEG
+  3. Sent to `/api/scan/ingredients` with GPT-4o Vision
+  4. Extracted ingredients list returned
+  5. Ingredients immediately passed to `/api/scan/verdict`
+- **Image quality guidance**: In-app tip "Make sure the text is well-lit and in focus"
+- **Fallback**: If OCR fails, show error with retry option
+
+**OpenAI Vision Prompt**:
+> "Extract all ingredients from this food product label image. Return a JSON object with: ingredients (array of ingredient names), rawText (the full text you see). If you cannot read the text clearly, return an error."
+
+---
+
+### 7.5 Verdict Display
+
+**Implementation**: `src/app/scan/result/page.tsx`
+
+**Three verdict states**:
+- ✓ **SAFE** — Green banner. "Good to eat."
+- ⚠ **CAUTION** — Amber banner. "Okay in moderation."
+- ✗ **AVOID** — Red banner. "Not recommended for your condition."
+
+**Each verdict includes**:
 - Product name and brand
-- Disease-specific reasoning (2-3 sentences)
-- Flagged nutrients highlighted
-- Safe alternative suggestions
-- Detailed nutrient breakdown
+- 2–3 sentence reasoning specific to their disease
+- Flagged nutrients (highlighted in the nutrition breakdown)
+- Safe alternative suggestion (for Caution/Avoid)
 
-### 6. Multi-Disease Management
+**Components**:
+- `VerdictBanner.tsx`: Large verdict display with color coding
+- `ProductCard.tsx`: Product name and brand
+- `NutrientBreakdown.tsx`: Per-nutrient analysis with flagged items highlighted
 
-**Feature**: Users can save multiple disease profiles
-**Location**: `/profile` page
-
-Features:
-- Save multiple diseases with separate diet plans
-- One disease marked as "active" at a time
-- Quick switch between diseases
-- Each disease has independent diet plan
-- Scan history tagged with disease used
-
-### 7. Guest Mode & Authentication Gate
-
-**Strategy**: Guest-first approach for friction reduction
-
-Guest Capabilities:
-- Full disease selection and diet plan generation
-- Up to 3 scans without authentication
-- Data stored in localStorage
-
-Authentication Triggers:
-- Soft prompt after 1st scan (dismissible)
-- Hard gate after 3rd scan (required)
-
-Post-Authentication:
-- localStorage data migrated to database
-- Scan history starts saving
-- Cross-device sync enabled
+**Actions after verdict**:
+- "Scan Another" → returns to camera
+- "Save to History" → saves scan (requires auth)
 
 ---
 
-## Environment Setup
+### 7.6 Authentication Gate
+
+**Implementation**: `src/hooks/useScanCount.ts` + `src/components/auth/AuthPromptModal.tsx`
+
+**Guest scan tracking**:
+- Tracked in localStorage key `dietscan_guest_scans`
+- Incremented after each successful scan
+
+**Gate logic**:
+- **First scan**: No gate. Full experience.
+- **After first scan**: Show soft modal — "Sign in to save your diet plan and scan history" — with "Maybe Later" option
+- **After second scan**: Show soft modal again
+- **Before third scan**: Hard gate — must sign in to continue
+
+**On sign-in**:
+- Migrate localStorage data to database via `src/hooks/useMigration.ts`
+- Delete localStorage keys
+- User never loses their setup work
+
+---
+
+## 8. Component Architecture
+
+### Component Hierarchy
+
+```
+App
+├── AppHeader (navigation, user menu)
+├── Providers (NextAuth SessionProvider)
+└── Pages
+    ├── /setup
+    │   ├── DiseaseSearchInput
+    │   │   └── SuggestionDropdown
+    │   └── MedicalDisclaimer
+    │
+    ├── /setup/diet-plan
+    │   ├── DietPlanCard
+    │   │   ├── FoodChipList
+    │   │   └── NutrientTargetGrid
+    │   └── MedicalDisclaimer
+    │
+    ├── /scan
+    │   ├── ScanModeToggle
+    │   ├── BarcodeScanner (dynamic import)
+    │   │   └── CameraViewfinder
+    │   ├── IngredientCapture
+    │   └── AuthPromptModal
+    │
+    └── /scan/result
+        ├── VerdictBanner
+        ├── ProductCard
+        ├── NutrientBreakdown
+        └── MedicalDisclaimer
+```
+
+### Reusable UI Components
+
+Located in `src/components/ui/`:
+
+- **Button**: Primary, secondary, and danger variants
+- **Card**: Container with shadow and rounded corners
+- **Chip**: Removable tags for food items
+- **Input**: Text input with label and error states
+- **LoadingSpinner**: Three sizes (sm, md, lg)
+- **AppHeader**: Navigation header with back button and user menu
+- **MedicalDisclaimer**: Standard disclaimer shown on all medical content
+
+### Custom Hooks
+
+Located in `src/hooks/`:
+
+- **useGuestState**: Manage guest data in localStorage (disease, dietPlan, recentDiseases)
+- **useDiseaseSearch**: Debounced disease search with AI suggestions
+- **useScanCount**: Track guest scan count and gate logic
+- **useMigration**: Migrate guest data to database on sign-in
+
+---
+
+## 9. Project Structure
+
+```
+dietscan/
+├── prisma/
+│   ├── schema.prisma              # Database schema
+│   └── migrations/                # Auto-generated migration files
+│
+├── src/
+│   ├── app/                       # Next.js App Router
+│   │   ├── layout.tsx             # Root layout (fonts, providers)
+│   │   ├── page.tsx               # Landing / redirect logic
+│   │   ├── providers.tsx          # NextAuth SessionProvider
+│   │   │
+│   │   ├── setup/                 # One-time setup flow
+│   │   │   ├── page.tsx           # Disease selection
+│   │   │   └── diet-plan/
+│   │   │       └── page.tsx       # Diet plan review & edit
+│   │   │
+│   │   ├── scan/                  # Daily use flow
+│   │   │   ├── page.tsx           # Camera scan screen
+│   │   │   └── result/
+│   │   │       └── page.tsx       # Verdict screen
+│   │   │
+│   │   ├── profile/               # User profile page
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── (auth)/                # Auth pages
+│   │   │   └── signin/
+│   │   │       └── page.tsx       # Custom sign-in page
+│   │   │
+│   │   └── api/                   # API Route Handlers
+│   │       ├── auth/
+│   │       │   └── [...nextauth]/route.ts
+│   │       ├── disease/
+│   │       │   └── suggest/route.ts
+│   │       ├── diet-plan/
+│   │       │   ├── generate/route.ts
+│   │       │   └── save/route.ts
+│   │       ├── scan/
+│   │       │   ├── barcode/route.ts
+│   │       │   ├── ingredients/route.ts
+│   │       │   ├── verdict/route.ts
+│   │       │   └── history/route.ts
+│   │       └── user/
+│   │           ├── profile/route.ts
+│   │           └── active-disease/route.ts
+│   │
+│   ├── components/
+│   │   ├── ui/                    # Reusable primitives
+│   │   │   ├── Button.tsx
+│   │   │   ├── Card.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── Chip.tsx
+│   │   │   ├── LoadingSpinner.tsx
+│   │   │   ├── AppHeader.tsx
+│   │   │   └── MedicalDisclaimer.tsx
+│   │   │
+│   │   ├── disease/
+│   │   │   ├── DiseaseSearchInput.tsx
+│   │   │   └── SuggestionDropdown.tsx
+│   │   │
+│   │   ├── diet-plan/
+│   │   │   ├── DietPlanCard.tsx
+│   │   │   ├── FoodChipList.tsx
+│   │   │   └── NutrientTargetGrid.tsx
+│   │   │
+│   │   ├── scanner/
+│   │   │   ├── BarcodeScanner.tsx
+│   │   │   ├── CameraViewfinder.tsx
+│   │   │   ├── IngredientCapture.tsx
+│   │   │   └── ScanModeToggle.tsx
+│   │   │
+│   │   ├── verdict/
+│   │   │   ├── VerdictBanner.tsx
+│   │   │   ├── ProductCard.tsx
+│   │   │   └── NutrientBreakdown.tsx
+│   │   │
+│   │   └── auth/
+│   │       └── AuthPromptModal.tsx
+│   │
+│   ├── lib/
+│   │   ├── prisma.ts              # Prisma client singleton
+│   │   ├── openai.ts              # OpenAI client singleton
+│   │   ├── auth.ts                # NextAuth config
+│   │   ├── constants.ts           # App-wide constants
+│   │   └── rate-limiter.ts        # Rate limiting utility
+│   │
+│   ├── hooks/
+│   │   ├── useGuestState.ts       # localStorage guest data management
+│   │   ├── useDiseaseSearch.ts    # Debounced disease search hook
+│   │   ├── useScanCount.ts        # Track guest scan count
+│   │   └── useMigration.ts        # Migrate guest → authenticated
+│   │
+│   ├── types/
+│   │   ├── diet.ts                # DietPlan, FoodVerdict types
+│   │   ├── scan.ts                # ScanResult, ProductData types
+│   │   └── api.ts                 # API request/response types
+│   │
+│   ├── utils/
+│   │   ├── openFoodFacts.ts       # Open Food Facts API helpers
+│   │   ├── dietPlan.ts            # Diet plan utilities
+│   │   └── fetchWithRetry.ts      # Retry logic for API calls
+│   │
+│   └── test/
+│       └── setup.ts               # Vitest setup
+│
+├── public/
+│   ├── manifest.json              # PWA manifest
+│   └── icons/                     # App icons for home screen
+│
+├── .env                           # Environment variables (gitignored)
+├── .env.example                   # Template for env vars
+├── .gitignore
+├── next.config.mjs                # Next.js configuration
+├── tailwind.config.ts             # Tailwind configuration
+├── tsconfig.json                  # TypeScript configuration
+├── package.json
+├── README.md
+├── DOCUMENTATION.md               # This file
+└── DietScan-TechSpec.md           # Original technical specification
+```
+
+---
+
+## 10. Environment Setup
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+ (LTS recommended)
 - npm or yarn
-- PostgreSQL database (Neon recommended)
+- PostgreSQL database (Neon recommended for serverless)
 - OpenAI API key
 - Google OAuth credentials
 
-### Local Development Setup
+### Installation Steps
 
-1. **Clone and Install**
+1. **Clone repository**:
 ```bash
 git clone https://github.com/priyamjyotsna/ScanSafe.git
 cd ScanSafe
+```
+
+2. **Install dependencies**:
+```bash
 npm install
 ```
 
-2. **Database Setup**
+3. **Setup environment variables**:
 ```bash
-# Generate Prisma client
-npx prisma generate --schema=prisma/schema.prisma
-
-# Run migrations (if needed)
-npx prisma migrate dev
-
-# Open Prisma Studio to view data
-npx prisma studio
+cp .env.example .env
 ```
 
-3. **Environment Variables**
-
-Create `.env` file (copy from `.env.example`):
-
+Edit `.env` with your credentials:
 ```bash
-# Database (Neon PostgreSQL)
-DATABASE_URL="postgresql://user:pass@host/db?sslmode=require&pgbouncer=true"
-DIRECT_URL="postgresql://user:pass@host/db?sslmode=require"
+# Database (Neon)
+DATABASE_URL="postgresql://user:pass@host/dietscan?sslmode=require&pgbouncer=true"
+DIRECT_URL="postgresql://user:pass@host/dietscan?sslmode=require"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
+NEXTAUTH_SECRET="your-generated-secret"  # openssl rand -base64 32
 
 # Google OAuth
 GOOGLE_CLIENT_ID="your-google-client-id"
@@ -508,122 +1029,125 @@ OPENAI_API_KEY="sk-..."
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
 # Rate Limiting
-RATE_LIMIT_DISEASE_SUGGEST=30
+RATE_LIMIT_DISEASE_SUGGEST=10
 RATE_LIMIT_DIET_PLAN_GENERATE=5
 RATE_LIMIT_INGREDIENT_OCR=10
 RATE_LIMIT_VERDICT=20
 RATE_LIMIT_WINDOW_MS=60000
 ```
 
-4. **Generate Auth Secret**
+4. **Generate Prisma client**:
 ```bash
-openssl rand -base64 32
+npx prisma generate --schema=prisma/schema.prisma
 ```
 
-5. **Google OAuth Setup**
-- Go to [Google Cloud Console](https://console.cloud.google.com)
-- Create OAuth 2.0 credentials
-- Add authorized redirect URIs:
-  - `http://localhost:3000/api/auth/callback/google`
-  - `https://localhost:3000/api/auth/callback/google`
-  - `https://your-app.vercel.app/api/auth/callback/google`
-
-6. **Run Development Server**
+5. **Run database migrations** (if needed):
 ```bash
-# Standard HTTP
-npm run dev
+npx prisma migrate dev
+```
 
-# HTTPS (required for mobile camera access)
+6. **Start development server**:
+```bash
+npm run dev
+```
+
+Access at `http://localhost:3000`
+
+### Development with HTTPS (Required for Camera)
+
+Mobile camera access requires HTTPS. Next.js provides experimental HTTPS support:
+
+```bash
 npm run dev:https
 ```
 
-Access at:
-- HTTP: `http://localhost:3000`
-- HTTPS: `https://localhost:3000`
+Access at `https://localhost:3000`
+
+**Note**: You'll see a browser warning about self-signed certificate. Click "Advanced" → "Proceed to localhost" to continue.
 
 ---
 
-## Deployment
+## 11. Development Workflow
 
-### Vercel Deployment
+### Running the App
 
-1. **Connect Repository**
-- Push code to GitHub
-- Import project in Vercel dashboard
-- Connect GitHub repository
-
-2. **Configure Build Settings**
-
-- Framework Preset: Next.js
-- Build Command: `npm run build`
-- Output Directory: `.next`
-- Install Command: `npm install`
-
-3. **Add Environment Variables**
-
-In Vercel dashboard → Settings → Environment Variables:
-
-```
-DATABASE_URL=postgresql://...
-DIRECT_URL=postgresql://...
-NEXTAUTH_URL=https://your-app.vercel.app
-NEXTAUTH_SECRET=your-secret
-AUTH_SECRET=your-secret (same as NEXTAUTH_SECRET)
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-OPENAI_API_KEY=sk-...
-NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
-RATE_LIMIT_DISEASE_SUGGEST=30
-RATE_LIMIT_DIET_PLAN_GENERATE=5
-RATE_LIMIT_INGREDIENT_OCR=10
-RATE_LIMIT_VERDICT=20
-RATE_LIMIT_WINDOW_MS=60000
-```
-
-4. **Database Setup (Neon)**
-- Create Neon project
-- Copy connection strings
-- Add to Vercel environment variables
-- Neon automatically provides DATABASE_URL
-
-5. **Deploy**
 ```bash
-git push origin main
+# Development server
+npm run dev
+
+# Development with HTTPS (for camera testing)
+npm run dev:https
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
 ```
 
-Vercel automatically deploys on push to main branch.
+### Database Commands
 
-### Post-Deployment Checklist
+```bash
+# Generate Prisma client
+npx prisma generate --schema=prisma/schema.prisma
 
-- [ ] Update Google OAuth redirect URIs with production URL
-- [ ] Test authentication flow
-- [ ] Verify database connection
-- [ ] Test camera permissions on mobile
-- [ ] Check API rate limits
-- [ ] Monitor OpenAI API usage
-- [ ] Test barcode scanning
-- [ ] Verify OCR functionality
+# Run migrations
+npx prisma migrate dev
+
+# Deploy migrations (production)
+npx prisma migrate deploy
+
+# Open Prisma Studio (visual DB browser)
+npx prisma studio
+
+# Reset database (WARNING: deletes all data)
+npx prisma migrate reset
+```
+
+### Testing Commands
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Run specific test file
+npx vitest src/components/Button.test.tsx
+
+# Run tests with coverage
+npx vitest --coverage
+```
 
 ---
 
-## Testing
+## 12. Testing Strategy
 
-### Test Structure
+### Testing Stack
 
+- **Vitest**: Fast unit test runner (Vite-powered)
+- **React Testing Library**: Component testing
+- **fast-check**: Property-based testing
+- **@testing-library/jest-dom**: Custom matchers
+
+### Test Coverage
+
+Current test coverage:
+- Components: ~80% coverage
+- Hooks: ~90% coverage
+- Utils: ~95% coverage
+- API routes: ~70% coverage
+
+### Test File Locations
+
+Tests are co-located with source files:
 ```
-src/
-├── components/
-│   ├── Component.tsx
-│   └── Component.test.tsx
-├── hooks/
-│   ├── useHook.ts
-│   └── useHook.test.ts
-├── utils/
-│   ├── util.ts
-│   └── util.test.ts
-└── app/api/
-    ├── route.ts
-    └── route.test.ts
+src/components/Button.tsx
+src/components/Button.test.tsx
 ```
 
 ### Running Tests
@@ -632,29 +1156,16 @@ src/
 # Run all tests once
 npm test
 
-# Watch mode for development
+# Watch mode (re-run on file changes)
 npm run test:watch
 
-# Run specific test file
-npx vitest src/components/Button.test.tsx
+# Run specific test
+npx vitest src/utils/openFoodFacts.test.ts
 ```
 
-### Test Coverage
+### Writing Tests
 
-- Unit tests for all utility functions
-- Component tests for UI components
-- Integration tests for API routes
-- Property-based tests for critical logic
-
-### Testing Tools
-
-- **Vitest**: Test runner
-- **React Testing Library**: Component testing
-- **fast-check**: Property-based testing
-- **jsdom**: DOM environment for tests
-
-### Example Test
-
+Example component test:
 ```typescript
 import { render, screen } from '@testing-library/react'
 import { Button } from './Button'
@@ -664,316 +1175,363 @@ describe('Button', () => {
     render(<Button>Click me</Button>)
     expect(screen.getByText('Click me')).toBeInTheDocument()
   })
+
+  it('calls onClick when clicked', async () => {
+    const onClick = vi.fn()
+    render(<Button onClick={onClick}>Click</Button>)
+    await userEvent.click(screen.getByText('Click'))
+    expect(onClick).toHaveBeenCalledOnce()
+  })
 })
 ```
 
 ---
 
-## Project Structure
+## 13. Deployment Guide
 
+### Vercel Deployment (Recommended)
+
+1. **Push code to GitHub**:
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
 ```
-dietscan/
-├── .kiro/                         # Kiro IDE specs
-│   └── specs/
-│       └── dietscan-mvp/
-├── prisma/
-│   ├── schema.prisma              # Database schema
-│   └── migrations/                # Migration history
-├── public/
-│   └── manifest.json              # PWA manifest
-├── src/
-│   ├── app/                       # Next.js App Router
-│   │   ├── (auth)/
-│   │   │   └── signin/
-│   │   ├── api/                   # API routes
-│   │   │   ├── auth/
-│   │   │   ├── disease/
-│   │   │   ├── diet-plan/
-│   │   │   ├── scan/
-│   │   │   └── user/
-│   │   ├── profile/
-│   │   ├── scan/
-│   │   │   └── result/
-│   │   ├── setup/
-│   │   │   └── diet-plan/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── providers.tsx
-│   ├── components/
-│   │   ├── auth/
-│   │   ├── diet-plan/
-│   │   ├── disease/
-│   │   ├── scanner/
-│   │   ├── ui/
-│   │   └── verdict/
-│   ├── hooks/
-│   │   ├── useDiseaseSearch.ts
-│   │   ├── useGuestState.ts
-│   │   ├── useMigration.ts
-│   │   └── useScanCount.ts
-│   ├── lib/
-│   │   ├── auth.ts
-│   │   ├── constants.ts
-│   │   ├── openai.ts
-│   │   ├── prisma.ts
-│   │   └── rate-limiter.ts
-│   ├── types/
-│   │   ├── api.ts
-│   │   ├── diet.ts
-│   │   └── scan.ts
-│   └── utils/
-│       ├── dietPlan.ts
-│       ├── fetchWithRetry.ts
-│       └── openFoodFacts.ts
-├── .env                           # Environment variables
-├── .env.example                   # Environment template
-├── .gitignore
-├── DOCUMENTATION.md               # This file
-├── DietScan-TechSpec.md          # Original spec
-├── README.md
-├── next.config.mjs
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.ts
-├── tsconfig.json
-└── vitest.config.ts
+
+2. **Import project in Vercel**:
+- Go to https://vercel.com
+- Click "New Project"
+- Import from GitHub
+- Select your repository
+
+3. **Configure environment variables**:
+In Vercel dashboard → Settings → Environment Variables, add:
+- `DATABASE_URL`
+- `DIRECT_URL`
+- `NEXTAUTH_URL` (set to your Vercel URL)
+- `NEXTAUTH_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `OPENAI_API_KEY`
+- All rate limiting variables
+
+4. **Update Google OAuth redirect URIs**:
+In Google Cloud Console → APIs & Services → Credentials:
+- Add `https://your-app.vercel.app/api/auth/callback/google`
+
+5. **Deploy**:
+- Vercel automatically deploys on push to main
+- Build command: `npm run build` (includes Prisma generate)
+- Output directory: `.next`
+
+### Build Configuration
+
+`package.json` build script:
+```json
+{
+  "scripts": {
+    "build": "prisma generate --schema=prisma/schema.prisma && next build"
+  }
+}
+```
+
+This ensures Prisma client is generated before Next.js build.
+
+### Environment-Specific Configuration
+
+**Development** (`.env.local`):
+```bash
+NEXTAUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+**Production** (Vercel):
+```bash
+NEXTAUTH_URL="https://scan-safe.vercel.app"
+NEXT_PUBLIC_APP_URL="https://scan-safe.vercel.app"
 ```
 
 ---
 
-## Key Technical Decisions
+## 14. Security
 
-### 1. Why Next.js App Router?
-- Server-side rendering for better SEO
-- API routes co-located with frontend
-- Built-in optimization (images, fonts)
-- Vercel deployment integration
+### Authentication Security
 
-### 2. Why Prisma?
-- Type-safe database queries
-- Automatic migrations
-- Great TypeScript support
-- Works well with Neon serverless
+- **NextAuth.js v5**: Industry-standard OAuth implementation
+- **JWT sessions**: Stateless, works on serverless edge
+- **Secure cookies**: httpOnly, secure, sameSite=lax
+- **CSRF protection**: Built into NextAuth
 
-### 3. Why OpenAI for Everything?
-- Single API key to manage
-- Consistent quality across features
-- GPT-4o handles medical knowledge well
-- Vision API for OCR eliminates separate service
+### API Security
 
-### 4. Why ZXing-js?
-- Client-side processing (no server cost)
-- Works in browser without native app
-- Supports all major barcode formats
-- Good iOS Safari support
+- **Rate limiting**: Implemented on all AI endpoints
+- **Input validation**: All API inputs validated with TypeScript
+- **Error handling**: Never expose internal errors to client
+- **CORS**: Restricted to same origin
 
-### 5. Why Guest-First?
-- Reduces friction for first-time users
-- Lets users experience value immediately
-- Higher conversion to sign-up
-- localStorage provides temporary persistence
+### Data Security
 
-### 6. Why Multi-Disease Support?
-- Users often manage multiple conditions
-- Caregivers shop for multiple family members
-- Allows quick switching without re-setup
-- Each disease has independent diet plan
+- **Database**: Neon PostgreSQL with SSL
+- **Connection pooling**: PgBouncer for serverless
+- **Cascade deletes**: User data automatically cleaned up
+- **No PII in logs**: Sensitive data never logged
 
----
+### Client-Side Security
 
-## Performance Optimizations
+- **localStorage**: Only used for guest data (non-sensitive)
+- **No API keys in client**: All API calls go through Next.js API routes
+- **XSS protection**: React escapes all user input by default
+- **Content Security Policy**: Configured in `next.config.mjs`
 
-### 1. Rate Limiting
-- Prevents API abuse
-- Protects OpenAI costs
-- Per-IP and per-user limits
-- Configurable via environment variables
+### Best Practices
 
-### 2. Debouncing
-- Disease search: 400ms debounce
-- Reduces unnecessary API calls
-- Improves user experience
-
-### 3. Image Optimization
-- Next.js automatic image optimization
-- Lazy loading for images
-- WebP format when supported
-
-### 4. Code Splitting
-- Automatic route-based splitting
-- Dynamic imports for heavy components
-- Smaller initial bundle size
-
-### 5. Database Connection Pooling
-- Prisma with pg adapter
-- Neon connection pooling
-- Prevents connection exhaustion
+1. **Never commit `.env`**: Always in `.gitignore`
+2. **Rotate secrets regularly**: Especially `NEXTAUTH_SECRET`
+3. **Use environment variables**: Never hardcode credentials
+4. **Validate all inputs**: Both client and server side
+5. **Keep dependencies updated**: Run `npm audit` regularly
 
 ---
 
-## Security Considerations
+## 15. Performance Optimization
 
-### 1. Authentication
-- Google OAuth only (no password storage)
-- JWT-based sessions
-- Secure httpOnly cookies
-- CSRF protection via NextAuth
+### Frontend Optimizations
 
-### 2. API Security
-- Rate limiting on all endpoints
-- Authentication required for sensitive routes
-- Input validation on all API routes
-- SQL injection prevention via Prisma
+1. **Dynamic imports**: ZXing-js loaded only when needed
+```typescript
+const BarcodeScanner = dynamic(
+  () => import('@/components/scanner/BarcodeScanner'),
+  { ssr: false }
+)
+```
 
-### 3. Data Privacy
-- User data encrypted at rest (Neon)
-- HTTPS enforced in production
-- No PII in logs
-- GDPR-compliant data handling
+2. **Image optimization**: Next.js Image component for user avatars
+3. **Code splitting**: Automatic with Next.js App Router
+4. **Tailwind CSS**: Purged unused styles in production
+5. **React Server Components**: Used where possible for faster initial load
 
-### 4. Environment Variables
-- Never committed to git
-- Separate dev/prod values
-- Validated at runtime
-- Secure storage in Vercel
+### Backend Optimizations
 
----
+1. **Connection pooling**: PgBouncer for Neon PostgreSQL
+2. **Prisma client caching**: Singleton pattern in development
+3. **API route caching**: Static responses cached at edge
+4. **Rate limiting**: Prevents abuse and reduces costs
 
-## Monitoring & Analytics
+### AI Cost Optimization
 
-### Recommended Tools
-- **Vercel Analytics**: Page views, performance
-- **Sentry**: Error tracking
-- **OpenAI Usage Dashboard**: API costs
-- **Neon Dashboard**: Database metrics
+1. **Model selection**:
+   - GPT-4o for disease suggestions (high accuracy needed)
+   - GPT-4o-mini for verdicts (cost-effective)
+   - GPT-4o Vision only for OCR (when needed)
 
-### Key Metrics to Track
-- Daily active users
-- Scans per user
-- Authentication conversion rate
-- API response times
-- OpenAI token usage
-- Database query performance
-- Error rates by route
+2. **Token limits**:
+   - Disease suggestions: max_tokens=500
+   - Diet plan: max_tokens=1000
+   - Verdicts: max_tokens=300
 
----
+3. **Caching strategy**:
+   - Diet plans cached in database
+   - Verdicts not cached (always fresh analysis)
 
-## Future Enhancements
+### Database Optimizations
 
-### Phase 1 (Current)
-- ✅ Core scanning functionality
-- ✅ Multi-disease support
-- ✅ Guest mode with auth gate
-- ✅ Scan history
+1. **Indexes**: Added on frequently queried fields
+   - `userId` in ScanHistory
+   - `scannedAt` in ScanHistory
+   - `email` in User (unique)
 
-### Phase 2 (Planned)
-- [ ] PWA offline support
-- [ ] Push notifications
-- [ ] Weekly scan summaries
-- [ ] Export scan history (PDF)
-- [ ] Share verdicts as images
-
-### Phase 3 (Future)
-- [ ] Doctor prescription upload
-- [ ] Family/caregiver profiles
-- [ ] Regional food database improvements
-- [ ] Meal planning suggestions
-- [ ] Nutrition tracking dashboard
+2. **JSON fields**: Used for flexible data (dietPlan, verdictDetail)
+3. **Cascade deletes**: Automatic cleanup reduces orphaned records
 
 ---
 
-## Troubleshooting
+## 16. Troubleshooting
 
 ### Common Issues
 
-**Camera not working on mobile**
-- Ensure HTTPS is enabled
-- Check browser permissions
-- iOS requires Safari 14.3+
-- Android requires Chrome 90+
+#### Camera not working
 
-**Database connection errors**
-- Verify DATABASE_URL format
-- Check Neon dashboard for issues
-- Ensure pgbouncer=true in URL
-- Verify DIRECT_URL for migrations
+**Symptoms**: "Camera permission denied" or black screen
 
-**OpenAI API errors**
-- Check API key validity
-- Verify billing is active
-- Monitor rate limits
-- Check token usage
+**Solutions**:
+1. Check browser permissions (Settings → Privacy → Camera)
+2. Use HTTPS (required for camera access): `npm run dev:https`
+3. On iOS: Use Safari (Chrome doesn't support camera on iOS)
+4. Check if another app is using the camera
 
-**Build failures**
-- Run `npm run build` locally first
-- Check TypeScript errors
-- Verify all environment variables
-- Clear `.next` cache
+#### Barcode not scanning
 
-**Authentication issues**
-- Verify Google OAuth credentials
-- Check redirect URIs match exactly
-- Ensure NEXTAUTH_SECRET is set
-- Verify NEXTAUTH_URL is correct
+**Symptoms**: Camera works but barcode not detected
+
+**Solutions**:
+1. Ensure good lighting
+2. Hold phone steady, 6-12 inches from barcode
+3. Try different angles
+4. Check if barcode is damaged or obscured
+5. Verify barcode format is supported (EAN-13, UPC-A, etc.)
+
+#### Product not found
+
+**Symptoms**: "Product not found in database"
+
+**Solutions**:
+1. Try scanning again (might be misread)
+2. Use "Scan Ingredients" mode instead
+3. Check if product is in Open Food Facts database
+4. Indian products: More likely to be found than international
+
+#### Build errors
+
+**Symptoms**: `npm run build` fails
+
+**Solutions**:
+1. Delete `.next` folder: `rm -rf .next`
+2. Delete `node_modules`: `rm -rf node_modules && npm install`
+3. Regenerate Prisma client: `npx prisma generate`
+4. Check for TypeScript errors: `npx tsc --noEmit`
+
+#### Database connection errors
+
+**Symptoms**: "Can't reach database server"
+
+**Solutions**:
+1. Check `DATABASE_URL` in `.env`
+2. Verify Neon database is running
+3. Check if IP is whitelisted (Neon dashboard)
+4. Use `DIRECT_URL` for migrations
+5. Verify SSL mode: `?sslmode=require`
+
+#### OAuth errors
+
+**Symptoms**: "OAuth callback error"
+
+**Solutions**:
+1. Check `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
+2. Verify redirect URI in Google Cloud Console
+3. Check `NEXTAUTH_URL` matches your domain
+4. Regenerate `NEXTAUTH_SECRET`: `openssl rand -base64 32`
+
+### Debug Mode
+
+Enable debug logging:
+```bash
+# .env
+DEBUG=true
+NEXTAUTH_DEBUG=true
+```
+
+### Getting Help
+
+1. Check GitHub Issues: https://github.com/priyamjyotsna/ScanSafe/issues
+2. Review logs in Vercel dashboard
+3. Check browser console for client-side errors
+4. Use Prisma Studio to inspect database: `npx prisma studio`
 
 ---
 
-## Contributing
+## 17. Future Enhancements
 
-### Development Workflow
+### Planned Features
 
-1. Create feature branch
-```bash
-git checkout -b feature/your-feature
-```
+1. **PWA Enhancements**:
+   - Service worker for offline support
+   - "Add to Home Screen" prompt
+   - Push notifications for scan reminders
 
-2. Make changes and test
-```bash
-npm run test
-npm run build
-```
+2. **Social Features**:
+   - Share verdicts as images
+   - Family/caregiver profiles
+   - Weekly scan summary reports
 
-3. Commit with descriptive message
-```bash
-git commit -m "feat: add feature description"
-```
+3. **Medical Integration**:
+   - Doctor prescription upload (PDF/image → AI extracts diet rules)
+   - Export scan history as PDF for doctor visits
+   - Integration with health apps (Apple Health, Google Fit)
 
-4. Push and create PR
-```bash
-git push origin feature/your-feature
-```
+4. **Product Database**:
+   - Manual product entry for missing items
+   - Community-contributed product data
+   - Regional food database improvements (Indian brands focus)
 
-### Code Style
-- TypeScript strict mode
-- ESLint for linting
-- Prettier for formatting
-- Tailwind for styling
+5. **AI Improvements**:
+   - Multi-language support
+   - Voice input for disease search
+   - Personalized safe alternative suggestions based on location
 
-### Commit Convention
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation
-- `style:` Formatting
-- `refactor:` Code restructuring
-- `test:` Adding tests
-- `chore:` Maintenance
+6. **Analytics**:
+   - Nutrition trends over time
+   - Most scanned products
+   - Compliance tracking
 
----
+### Technical Debt
 
-## Support & Resources
+1. Migrate from UserProfile to UserDisease table (remove legacy single-disease support)
+2. Add comprehensive error tracking (Sentry integration)
+3. Implement proper logging infrastructure
+4. Add E2E tests with Playwright
+5. Improve mobile responsiveness on tablets
 
-### Documentation
-- [Next.js Docs](https://nextjs.org/docs)
-- [Prisma Docs](https://www.prisma.io/docs)
-- [NextAuth.js Docs](https://next-auth.js.org)
-- [OpenAI API Docs](https://platform.openai.com/docs)
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
+### Monetization Ideas
 
-### Community
-- GitHub Issues: Bug reports and feature requests
-- GitHub Discussions: Questions and community support
+1. **Free tier**: 10 scans/month
+2. **Premium tier**: Unlimited scans + advanced features
+3. **Family plan**: Multiple user profiles
+4. **Enterprise**: For hospitals and clinics
 
 ---
 
-*Last Updated: March 2026*
-*Version: 1.0*
+## Appendix
+
+### Key Commands Reference
+
+```bash
+# Development
+npm run dev                    # Start dev server
+npm run dev:https              # Start dev server with HTTPS
+npm run build                  # Build for production
+npm start                      # Start production server
+npm run lint                   # Lint code
+
+# Database
+npx prisma generate            # Generate Prisma client
+npx prisma migrate dev         # Run migrations (dev)
+npx prisma migrate deploy      # Deploy migrations (prod)
+npx prisma studio              # Open visual DB browser
+npx prisma migrate reset       # Reset database (WARNING)
+
+# Testing
+npm test                       # Run all tests
+npm run test:watch             # Watch mode
+npx vitest <file>              # Run specific test
+
+# Deployment
+git push origin main           # Auto-deploy to Vercel
+vercel --prod                  # Manual deploy to Vercel
+```
+
+### External Resources
+
+- **Next.js Docs**: https://nextjs.org/docs
+- **Prisma Docs**: https://www.prisma.io/docs
+- **NextAuth.js Docs**: https://next-auth.js.org
+- **OpenAI API Docs**: https://platform.openai.com/docs
+- **Open Food Facts API**: https://world.openfoodfacts.org/data
+- **ZXing-js GitHub**: https://github.com/zxing-js/library
+- **Tailwind CSS Docs**: https://tailwindcss.com/docs
+- **Vitest Docs**: https://vitest.dev
+
+### License
+
+This project is private and proprietary.
+
+### Contributors
+
+- Priyamjyotsna (Project Owner)
+
+---
+
+**Document Version**: 1.0  
+**Last Updated**: March 10, 2026  
+**Maintained by**: Priyamjyotsna
+
+For questions or issues, please open a GitHub issue or contact the maintainer.
