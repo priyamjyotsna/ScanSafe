@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  googleId      String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       UserProfile?
+  diseases      UserDisease[]
+  scanHistory   ScanHistory[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diseaseName   String
+  dietPlan      Json
+  isCustomized  Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("user_profiles")
+}
+
+model UserDisease {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diseaseName   String
+  dietPlan      Json
+  isCustomized  Boolean   @default(false)
+  isActive      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, diseaseName])
+  @@index([userId])
+  @@map("user_diseases")
+}
+
+model ScanHistory {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productName   String?
+  brand         String?
+  barcode       String?
+  scanMethod    ScanMethod
+  verdict       Verdict
+  verdictDetail Json?
+  scannedAt     DateTime    @default(now())
+
+  @@index([userId])
+  @@index([scannedAt])
+  @@map("scan_history")
+}
+
+enum ScanMethod {
+  BARCODE
+  INGREDIENT_OCR
+}
+
+enum Verdict {
+  SAFE
+  CAUTION
+  AVOID
+}
