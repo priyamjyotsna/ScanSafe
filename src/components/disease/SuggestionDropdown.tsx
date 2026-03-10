@@ -37,6 +37,7 @@ export function SuggestionDropdown({ suggestions, loading, onSelect }: Suggestio
           <button
             key={suggestion}
             role="option"
+            aria-selected="false"
             type="button"
             className="w-full cursor-pointer px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none"
             onClick={() => onSelect(suggestion)}

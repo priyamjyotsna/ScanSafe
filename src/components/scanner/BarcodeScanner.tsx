@@ -185,7 +185,9 @@ export function BarcodeScannerComponent({ onDecode, onError }: BarcodeScannerPro
       try { zxingReader?.reset() } catch { /* ignore */ }
       if (stream) stream.getTracks().forEach((t) => t.stop())
       if (videoRef.current?.srcObject) {
-        const s = videoRef.current.srcObject as MediaStream
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const vid = videoRef.current
+        const s = vid.srcObject as MediaStream
         s.getTracks().forEach((t) => t.stop())
       }
     }

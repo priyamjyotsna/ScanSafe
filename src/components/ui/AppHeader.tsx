@@ -55,6 +55,7 @@ export function AppHeader({ title = 'DietScan', backHref }: AppHeaderProps) {
               aria-expanded={menuOpen}
             >
               {session.user.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={session.user.image}
                   alt=""

@@ -154,6 +154,7 @@ export default function ProfilePage() {
         {/* User card */}
         <div className="mb-5 flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4">
           {session?.user?.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={session.user.image} alt="" referrerPolicy="no-referrer" className="h-14 w-14 rounded-full object-cover ring-2 ring-gray-100" />
           ) : (
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-xl font-semibold text-emerald-700">
