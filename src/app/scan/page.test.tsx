@@ -38,15 +38,13 @@ vi.mock('@/hooks/useGuestState', () => ({
 
 // Capture callbacks from child components
 let capturedOnDecode: ((barcode: string) => void) | null = null
-let capturedOnError: ((err: Error) => void) | null = null
 let capturedOnIngredientsExtracted: ((ingredients: string[], rawText: string) => void) | null = null
 
 // Mock next/dynamic to return our mock BarcodeScanner
 vi.mock('next/dynamic', () => ({
   default: () => {
-    const MockScanner = (props: { onDecode: (b: string) => void; onError?: (e: Error) => void }) => {
+    const MockScanner = (props: { onDecode: (b: string) => void }) => {
       capturedOnDecode = props.onDecode
-      capturedOnError = props.onError || null
       return <div data-testid="barcode-scanner">Scanner</div>
     }
     MockScanner.displayName = 'MockBarcodeScanner'
@@ -55,14 +53,14 @@ vi.mock('next/dynamic', () => ({
 }))
 
 vi.mock('@/components/scanner/IngredientCapture', () => ({
-  IngredientCapture: ({ onIngredientsExtracted, onError }: { onIngredientsExtracted: (i: string[], r: string) => void; onError?: (e: string) => void }) => {
+  IngredientCapture: ({ onIngredientsExtracted }: { onIngredientsExtracted: (i: string[], r: string) => void; onError?: (e: string) => void }) => {
     capturedOnIngredientsExtracted = onIngredientsExtracted
     return <div data-testid="ingredient-capture">Ingredient Capture</div>
   },
 }))
 
 vi.mock('@/components/scanner/ScanModeToggle', () => ({
-  ScanModeToggle: ({ mode, onModeChange }: { mode: string; onModeChange: (m: 'barcode' | 'ingredient') => void }) => (
+  ScanModeToggle: ({ onModeChange }: { mode: string; onModeChange: (m: 'barcode' | 'ingredient') => void }) => (
     <div data-testid="scan-mode-toggle">
       <button onClick={() => onModeChange('barcode')}>Barcode</button>
       <button onClick={() => onModeChange('ingredient')}>Ingredient</button>
@@ -85,8 +83,8 @@ vi.mock('@/components/ui/Button', () => ({
 }))
 
 vi.mock('@/components/auth/AuthPromptModal', () => ({
-  default: ({ mode, onDismiss }: { mode: string; onSignIn: () => void; onDismiss: () => void }) => (
-    <div data-testid="auth-modal" data-mode={mode}>
+  default: ({ onDismiss, mode: modalMode }: { mode: string; onSignIn: () => void; onDismiss: () => void }) => (
+    <div data-testid="auth-modal" data-mode={modalMode}>
       <button onClick={onDismiss}>Dismiss</button>
     </div>
   ),
@@ -96,7 +94,6 @@ describe('ScanPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     capturedOnDecode = null
-    capturedOnError = null
     capturedOnIngredientsExtracted = null
     mockDisease = 'Type 2 Diabetes'
     mockDietPlan = { avoid: ['Salt'], prefer: ['Vegetables'], watch: ['Sodium'], nutrients: { Sodium: '< 300mg' } }

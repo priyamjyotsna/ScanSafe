@@ -32,10 +32,9 @@ const fakePlan: DietPlan = {
 }
 
 // Mock DietPlanCard
-let capturedOnSave: ((plan: DietPlan, isCustomized: boolean) => void) | null = null
 vi.mock('@/components/diet-plan/DietPlanCard', () => ({
   DietPlanCard: ({ plan, onSave }: { plan: DietPlan; editable: boolean; onSave: (p: DietPlan, c: boolean) => void }) => {
-    capturedOnSave = onSave
+    void onSave // referenced to avoid unused warning
     return <div data-testid="diet-plan-card">{plan.avoid.join(', ')}</div>
   },
 }))
@@ -51,7 +50,6 @@ vi.mock('@/components/ui/LoadingSpinner', () => ({
 describe('DietPlanReviewPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    capturedOnSave = null
     mockDisease = 'Type 2 Diabetes'
     global.fetch = vi.fn()
   })

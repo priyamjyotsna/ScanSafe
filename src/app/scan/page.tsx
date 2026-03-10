@@ -124,7 +124,7 @@ export default function ScanPage() {
   )
 
   const handleIngredientsExtracted = useCallback(
-    async (ingredients: string[], rawText: string) => {
+    async (ingredients: string[], _rawText: string) => {
       if (checkAuthGate()) return
 
       setPhase('analyzing')
